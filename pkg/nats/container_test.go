@@ -1,16 +1,13 @@
-package mongo
+package nats
 
 import (
 	"context"
 	"errors"
 	"testing"
 
+	"github.com/nats-io/nats.go"
 	"github.com/stretchr/testify/assert"
 	tc "github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	opts "testdeps/pkg/options"
 )
 
 func TestRun(t *testing.T) {
@@ -25,18 +22,11 @@ func TestRun(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-
 		t.Run("can connect to container", func(t *testing.T) {
-			/// Test that container is alive by connecting to it
-			ctx := context.Background()
-			clientOptions := options.Client().ApplyURI(con.ConnectionString)
-			client, connErr := mongo.Connect(ctx, clientOptions)
-			assert.NoError(t, connErr)
-			assert.NotNil(t, client)
-			assert.NoError(t, client.Ping(ctx, nil))
-			assert.NoError(t, client.Disconnect(ctx))
+			conn, err := nats.Connect(con.ConnectionString)
+			assert.NoError(t, err)
+			assert.Equal(t, nats.CONNECTED, conn.Status())
 		})
-
 		t.Run("can terminate", func(t *testing.T) {
 			ctx := context.Background()
 			termErr := con.Terminate(ctx)
@@ -85,18 +75,11 @@ func TestRunWithContext(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-
 		t.Run("can connect to container", func(t *testing.T) {
-			/// Test that container is alive by connecting to it
-			ctx := context.Background()
-			clientOptions := options.Client().ApplyURI(con.ConnectionString)
-			client, connErr := mongo.Connect(ctx, clientOptions)
-			assert.NoError(t, connErr)
-			assert.NotNil(t, client)
-			assert.NoError(t, client.Ping(ctx, nil))
-			assert.NoError(t, client.Disconnect(ctx))
+			conn, err := nats.Connect(con.ConnectionString)
+			assert.NoError(t, err)
+			assert.Equal(t, nats.CONNECTED, conn.Status())
 		})
-
 		t.Run("can terminate", func(t *testing.T) {
 			ctx := context.Background()
 			termErr := con.Terminate(ctx)
@@ -168,16 +151,10 @@ func TestRunTest(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-
 		t.Run("can connect to container", func(t *testing.T) {
-			/// Test that container is alive by connecting to it
-			ctx := context.Background()
-			clientOptions := options.Client().ApplyURI(con.ConnectionString)
-			client, connErr := mongo.Connect(ctx, clientOptions)
-			assert.NoError(t, connErr)
-			assert.NotNil(t, client)
-			assert.NoError(t, client.Ping(ctx, nil))
-			assert.NoError(t, client.Disconnect(ctx))
+			conn, err := nats.Connect(con.ConnectionString)
+			assert.NoError(t, err)
+			assert.Equal(t, nats.CONNECTED, conn.Status())
 		})
 	})
 	t.Run("forwards opts errors", func(t *testing.T) {
@@ -236,16 +213,10 @@ func TestRunTestWithContext(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-
 		t.Run("can connect to container", func(t *testing.T) {
-			/// Test that container is alive by connecting to it
-			ctx := context.Background()
-			clientOptions := options.Client().ApplyURI(con.ConnectionString)
-			client, connErr := mongo.Connect(ctx, clientOptions)
-			assert.NoError(t, connErr)
-			assert.NotNil(t, client)
-			assert.NoError(t, client.Ping(ctx, nil))
-			assert.NoError(t, client.Disconnect(ctx))
+			conn, err := nats.Connect(con.ConnectionString)
+			assert.NoError(t, err)
+			assert.Equal(t, nats.CONNECTED, conn.Status())
 		})
 	})
 
@@ -287,53 +258,4 @@ func TestRunTestWithContext(t *testing.T) {
 		assert.Error(t, newErr)
 		assert.Nil(t, con)
 	})
-}
-
-func TestMakeContainerRequest(t *testing.T) {
-	t.Run("no options", func(t *testing.T) {
-		cReq, err := makeContainerRequest([]opts.Option{})
-		assert.NoError(t, err)
-		assert.NotEmpty(t, cReq)
-		assert.Equal(t, image, cReq.Image)
-		assert.Equal(t, []string{mappedPort}, cReq.ExposedPorts)
-		assert.Equal(t, wait.ForLog(readyLog), cReq.WaitingFor)
-		assert.True(t, cReq.AutoRemove)
-	})
-	t.Run("applies options", func(t *testing.T) {
-		image := "test"
-		cReq, err := makeContainerRequest([]opts.Option{
-			func(request *tc.ContainerRequest) error {
-				request.Image = image
-				return nil
-			},
-		})
-		assert.NoError(t, err)
-		assert.NotEmpty(t, cReq)
-		assert.Equal(t, image, cReq.Image)
-	})
-	t.Run("error in opt", func(t *testing.T) {
-		testErr := errors.New("test error")
-		cReq, err := makeContainerRequest([]opts.Option{
-			func(request *tc.ContainerRequest) error {
-				return testErr
-			},
-		})
-		assert.ErrorIs(t, err, testErr)
-		assert.Empty(t, cReq)
-	})
-}
-
-func TestMakeRootUserPrefix(t *testing.T) {
-	testUser := "user"
-	testPass := "pass"
-	expectation := testUser + ":" + testPass + "@"
-	cReq := tc.ContainerRequest{
-		Env: map[string]string{
-			"MONGO_INITDB_ROOT_USERNAME": testUser,
-			"MONGO_INITDB_ROOT_PASSWORD": testPass,
-		},
-	}
-
-	authStr := makeRootUserPrefix(cReq)
-	assert.Equal(t, expectation, authStr)
 }

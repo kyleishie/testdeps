@@ -1,17 +1,15 @@
 package nats
 
 import (
-	"github.com/testcontainers/testcontainers-go"
+	tc "github.com/testcontainers/testcontainers-go"
 	"testdeps/pkg/options"
 )
 
 // WithJetStream enables JetStream in the NATS container.
 // This is the equivalent of running nats -js.
 func WithJetStream() options.Option {
-	return func(request *testcontainers.ContainerRequest) error {
-		request.Cmd = []string{
-			cmdJetStreamEnabled,
-		}
+	return func(request *tc.ContainerRequest) error {
+		request.Cmd = append(request.Cmd, cmdJetStreamEnabled)
 		return nil
 	}
 }

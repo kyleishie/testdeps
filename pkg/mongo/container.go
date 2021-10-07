@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"testing"
 	"time"
 
 	tc "github.com/testcontainers/testcontainers-go"
@@ -23,10 +24,18 @@ type container struct {
 	ConnectionString string
 }
 
+// Run creates and starts a docker container with the `mongo` image.
+// Defaults to `mongo:latest` if no option sets image tag.
+// A default context is used with a timeout of two minutes. To customize use RunWithContext.
 func Run(opts ...options.Option) (*container, error) {
-	return RunWithContext(context.Background(), opts...)
+	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+	defer cancel()
+	return RunWithContext(ctx, opts...)
 }
 
+// RunWithContext creates and starts a docker container with the `mongo` image.
+// Defaults to `mongo:latest` if no option sets image tag.
+// A context can be provided to configure things such as timeout.
 func RunWithContext(ctx context.Context, opts ...options.Option) (con *container, err error) {
 	cReq, err := makeContainerRequest(opts)
 	if err != nil {
@@ -53,6 +62,37 @@ func RunWithContext(ctx context.Context, opts ...options.Option) (con *container
 	}
 
 	return
+}
+
+// RunTest creates and starts a docker container with the `mongo` image.
+// Defaults to `mongo:latest` if no option sets image tag.
+// The container is automatically terminated after the test is finished.
+// A default context is used with a timeout of two minutes. To customize use RunTestWithContext.
+func RunTest(t *testing.T, opts ...options.Option) (con *container, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+	defer cancel()
+	return RunTestWithContext(t, ctx, opts...)
+}
+
+// RunTestWithContext creates and starts a docker container with the `mongo` image.
+// Defaults to `mongo:latest` if no option sets image tag.
+// A context can be provided to configure things such as timeout.
+// The container is automatically terminated after the test is finished.
+func RunTestWithContext(t *testing.T, ctx context.Context, opts ...options.Option) (con *container, err error) {
+	c, err := RunWithContext(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	t.Cleanup(func() {
+		ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+		defer cancel()
+		if err := c.Terminate(ctx); err != nil {
+			t.Error(err)
+		}
+	})
+
+	return c, nil
 }
 
 func makeContainerRequest(opts []options.Option) (cReq tc.ContainerRequest, err error) {
