@@ -7,12 +7,12 @@ container to test against. No more wondering if your tests are passing simply be
 
 ### TODO:
 
-- [] Finish pkg/nats
-- [] Add examples
-- [] Implement PostgreSQL
-- [] Implement Redis
-- [] Implement Kafka
-- [] Implement DynamoDB
+- [ ] Finish pkg/nats
+- [ ] Add examples
+- [ ] Implement PostgreSQL
+- [ ] Implement Redis
+- [ ] Implement Kafka
+- [ ] Implement DynamoDB
 
 ### Contribution
 
