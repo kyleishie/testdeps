@@ -1,8 +1,8 @@
 package mongo
 
 import (
+	"github.com/kyleishie/testdeps/pkg/options"
 	"github.com/testcontainers/testcontainers-go"
-	"testdeps/pkg/options"
 )
 
 const (

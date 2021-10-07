@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kyleishie/testdeps/pkg/options"
 	tc "github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"testdeps/pkg/options"
 )
 
 const (

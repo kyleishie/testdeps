@@ -5,12 +5,12 @@ import (
 	"errors"
 	"testing"
 
+	opts "github.com/kyleishie/testdeps/pkg/options"
 	"github.com/stretchr/testify/assert"
 	tc "github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	opts "testdeps/pkg/options"
 )
 
 func TestRun(t *testing.T) {

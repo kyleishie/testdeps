@@ -1,4 +1,4 @@
-module testdeps
+module github.com/kyleishie/testdeps
 
 go 1.17
 

@@ -1,8 +1,8 @@
 package nats
 
 import (
+	"github.com/kyleishie/testdeps/pkg/options"
 	tc "github.com/testcontainers/testcontainers-go"
-	"testdeps/pkg/options"
 )
 
 // WithJetStream enables JetStream in the NATS container.
