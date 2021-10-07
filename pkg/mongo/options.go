@@ -2,7 +2,7 @@ package mongo
 
 import (
 	"github.com/testcontainers/testcontainers-go"
-	"testdeps/internal/options"
+	"testdeps/pkg/options"
 )
 
 const (

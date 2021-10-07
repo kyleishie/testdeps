@@ -10,7 +10,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	opts "testdeps/internal/options"
+	opts "testdeps/pkg/options"
 )
 
 func TestRun(t *testing.T) {

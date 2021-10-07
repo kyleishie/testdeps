@@ -5,7 +5,7 @@ import (
 
 	tc "github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"testdeps/internal/options"
+	"testdeps/pkg/options"
 )
 
 const (
