@@ -11,13 +11,13 @@ import (
 )
 
 // NewDatabase creates a new mongo client then a new database with then given name and options.
-func (c *container) NewDatabase(name string, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
+func (c *Container) NewDatabase(name string, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
 	return c.NewDatabaseWithContext(context.Background(), name, opts...)
 }
 
 // NewDatabaseWithContext creates a new mongo.Database with then given name and options.
 // NewDatabaseWithContext exists to allow you to customize the connection process, e.g., apply timeout.
-func (c *container) NewDatabaseWithContext(ctx context.Context, name string, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
+func (c *Container) NewDatabaseWithContext(ctx context.Context, name string, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
 	client, err := c.NewClientWithContext(ctx)
 	if err != nil {
 		return nil, err
@@ -25,19 +25,19 @@ func (c *container) NewDatabaseWithContext(ctx context.Context, name string, opt
 	return client.Database(name, opts...), nil
 }
 
-// NewTestDatabase creates a new Database with a random name within the container.
+// NewTestDatabase creates a new Database with a random name within the Container.
 // The database is automatically dropped after to test it finished.
 // Note: A default context is used with a timeout of two minutes.
-func (c *container) NewTestDatabase(t *testing.T, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
+func (c *Container) NewTestDatabase(t *testing.T, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
 	defer cancel()
 	return c.NewTestDatabaseWithContext(t, ctx, opts...)
 }
 
-// NewTestDatabaseWithContext creates a new mongo.Database with a random name within the container.
+// NewTestDatabaseWithContext creates a new mongo.Database with a random name within the Container.
 // The database will be named randomly.
 // The database is automatically dropped and the underlying mongo.Client will be disconnected after to test it finished.
-func (c *container) NewTestDatabaseWithContext(t *testing.T, ctx context.Context, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
+func (c *Container) NewTestDatabaseWithContext(t *testing.T, ctx context.Context, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
 	dbId := uuid.New().String()
 	dbId = strings.ReplaceAll(dbId, "-", "")
 

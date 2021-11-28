@@ -19,24 +19,24 @@ const (
 	testDuration = time.Minute * 2
 )
 
-type container struct {
+type Container struct {
 	tc.Container
 	ConnectionString string
 }
 
-// Run creates and starts a docker container with the `mongo` image.
+// Run creates and starts a docker Container with the `mongo` image.
 // Defaults to `mongo:latest` if no option sets image tag.
 // A default context is used with a timeout of two minutes. To customize use RunWithContext.
-func Run(opts ...options.Option) (*container, error) {
+func Run(opts ...options.Option) (*Container, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
 	defer cancel()
 	return RunWithContext(ctx, opts...)
 }
 
-// RunWithContext creates and starts a docker container with the `mongo` image.
+// RunWithContext creates and starts a docker Container with the `mongo` image.
 // Defaults to `mongo:latest` if no option sets image tag.
 // A context can be provided to configure things such as timeout.
-func RunWithContext(ctx context.Context, opts ...options.Option) (con *container, err error) {
+func RunWithContext(ctx context.Context, opts ...options.Option) (con *Container, err error) {
 	cReq, err := makeContainerRequest(opts)
 	if err != nil {
 		return
@@ -56,7 +56,7 @@ func RunWithContext(ctx context.Context, opts ...options.Option) (con *container
 		return
 	}
 
-	con = &container{
+	con = &Container{
 		Container:        c,
 		ConnectionString: fmt.Sprintf("%s://%s%s:%d", proto, makeRootUserPrefix(cReq), host, port.Int()),
 	}
@@ -64,21 +64,21 @@ func RunWithContext(ctx context.Context, opts ...options.Option) (con *container
 	return
 }
 
-// RunTest creates and starts a docker container with the `mongo` image.
+// RunTest creates and starts a docker Container with the `mongo` image.
 // Defaults to `mongo:latest` if no option sets image tag.
-// The container is automatically terminated after the test is finished.
+// The Container is automatically terminated after the test is finished.
 // A default context is used with a timeout of two minutes. To customize use RunTestWithContext.
-func RunTest(t *testing.T, opts ...options.Option) (con *container, err error) {
+func RunTest(t *testing.T, opts ...options.Option) (con *Container, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
 	defer cancel()
 	return RunTestWithContext(t, ctx, opts...)
 }
 
-// RunTestWithContext creates and starts a docker container with the `mongo` image.
+// RunTestWithContext creates and starts a docker Container with the `mongo` image.
 // Defaults to `mongo:latest` if no option sets image tag.
 // A context can be provided to configure things such as timeout.
-// The container is automatically terminated after the test is finished.
-func RunTestWithContext(t *testing.T, ctx context.Context, opts ...options.Option) (con *container, err error) {
+// The Container is automatically terminated after the test is finished.
+func RunTestWithContext(t *testing.T, ctx context.Context, opts ...options.Option) (con *Container, err error) {
 	c, err := RunWithContext(ctx, opts...)
 	if err != nil {
 		return nil, err

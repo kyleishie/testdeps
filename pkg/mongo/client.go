@@ -10,14 +10,14 @@ import (
 
 // NewClient creates a new mongo client using the connection string of the Container.
 // The connection is tested once before returning the new client.
-func (c *container) NewClient() (*mongo.Client, error) {
+func (c *Container) NewClient() (*mongo.Client, error) {
 	return c.NewClientWithContext(context.Background())
 }
 
 // NewClientWithContext creates a new mongo client using the connection string of the Container.
 // The connection is tested once before returning the new client.
 // NewClientWithContext exists to allow you to customize the connection process, e.g., apply timeout.
-func (c *container) NewClientWithContext(ctx context.Context) (*mongo.Client, error) {
+func (c *Container) NewClientWithContext(ctx context.Context) (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(c.ConnectionString)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -35,7 +35,7 @@ func (c *container) NewClientWithContext(ctx context.Context) (*mongo.Client, er
 // NewTestClient creates a mongo.Client for testing purposes.
 // The mongo.Client will be disconnected automatically after the test finishes.
 // Note: A default context is used with a timeout of two minutes.
-func (c *container) NewTestClient(t *testing.T) (*mongo.Client, error) {
+func (c *Container) NewTestClient(t *testing.T) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
 	defer cancel()
 	return c.NewTestClientWithContext(t, ctx)
@@ -43,7 +43,7 @@ func (c *container) NewTestClient(t *testing.T) (*mongo.Client, error) {
 
 // NewTestClientWithContext creates a mongo.Client for testing purposes.
 // The mongo.Client will be disconnected automatically after the test finishes.
-func (c *container) NewTestClientWithContext(t *testing.T, ctx context.Context) (*mongo.Client, error) {
+func (c *Container) NewTestClientWithContext(t *testing.T, ctx context.Context) (*mongo.Client, error) {
 	client, err := c.NewClientWithContext(ctx)
 	if err != nil {
 		return nil, err

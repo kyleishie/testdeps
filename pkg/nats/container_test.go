@@ -13,7 +13,7 @@ import (
 func TestRun(t *testing.T) {
 	t.Parallel()
 
-	t.Run("should start container", func(t *testing.T) {
+	t.Run("should start Container", func(t *testing.T) {
 		t.Parallel()
 		con, newErr := Run()
 		assert.NoError(t, newErr)
@@ -22,7 +22,7 @@ func TestRun(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-		t.Run("can connect to container", func(t *testing.T) {
+		t.Run("can connect to Container", func(t *testing.T) {
 			conn, err := nats.Connect(con.ConnectionString)
 			assert.NoError(t, err)
 			assert.Equal(t, nats.CONNECTED, conn.Status())
@@ -42,7 +42,7 @@ func TestRun(t *testing.T) {
 		assert.ErrorIs(t, newErr, testErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards container creation error", func(t *testing.T) {
+	t.Run("forwards Container creation error", func(t *testing.T) {
 		t.Parallel()
 		con, newErr := Run(func(request *tc.ContainerRequest) error {
 			request.Image = ""
@@ -51,7 +51,7 @@ func TestRun(t *testing.T) {
 		assert.Error(t, newErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards running container error", func(t *testing.T) {
+	t.Run("forwards running Container error", func(t *testing.T) {
 		t.Parallel()
 		con, newErr := Run(func(request *tc.ContainerRequest) error {
 			request.ExposedPorts = nil
@@ -65,7 +65,7 @@ func TestRun(t *testing.T) {
 func TestRunWithContext(t *testing.T) {
 	t.Parallel()
 
-	t.Run("should start container", func(t *testing.T) {
+	t.Run("should start Container", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 		con, newErr := RunWithContext(ctx)
@@ -75,7 +75,7 @@ func TestRunWithContext(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-		t.Run("can connect to container", func(t *testing.T) {
+		t.Run("can connect to Container", func(t *testing.T) {
 			conn, err := nats.Connect(con.ConnectionString)
 			assert.NoError(t, err)
 			assert.Equal(t, nats.CONNECTED, conn.Status())
@@ -96,7 +96,7 @@ func TestRunWithContext(t *testing.T) {
 		assert.ErrorIs(t, newErr, testErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards container creation error", func(t *testing.T) {
+	t.Run("forwards Container creation error", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 		con, newErr := RunWithContext(ctx, func(request *tc.ContainerRequest) error {
@@ -106,7 +106,7 @@ func TestRunWithContext(t *testing.T) {
 		assert.Error(t, newErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards running container error", func(t *testing.T) {
+	t.Run("forwards running Container error", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 		con, newErr := RunWithContext(ctx, func(request *tc.ContainerRequest) error {
@@ -129,9 +129,9 @@ func TestRunWithContext(t *testing.T) {
 func TestRunTest(t *testing.T) {
 	t.Parallel()
 
-	t.Run("terminates container after test", func(t *testing.T) {
+	t.Run("terminates Container after test", func(t *testing.T) {
 		t.Parallel()
-		var con *container
+		var con *Container
 		/// Using sub test as testing scoep for termination
 		t.Run("sub test scope", func(t *testing.T) {
 			con, _ = RunTest(t)
@@ -142,7 +142,7 @@ func TestRunTest(t *testing.T) {
 		assert.Empty(t, ip)
 	})
 
-	t.Run("should start container", func(t *testing.T) {
+	t.Run("should start Container", func(t *testing.T) {
 		t.Parallel()
 		con, newErr := RunTest(t)
 		assert.NoError(t, newErr)
@@ -151,7 +151,7 @@ func TestRunTest(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-		t.Run("can connect to container", func(t *testing.T) {
+		t.Run("can connect to Container", func(t *testing.T) {
 			conn, err := nats.Connect(con.ConnectionString)
 			assert.NoError(t, err)
 			assert.Equal(t, nats.CONNECTED, conn.Status())
@@ -166,7 +166,7 @@ func TestRunTest(t *testing.T) {
 		assert.ErrorIs(t, newErr, testErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards container creation error", func(t *testing.T) {
+	t.Run("forwards Container creation error", func(t *testing.T) {
 		t.Parallel()
 		con, newErr := RunTest(t, func(request *tc.ContainerRequest) error {
 			request.Image = ""
@@ -175,7 +175,7 @@ func TestRunTest(t *testing.T) {
 		assert.Error(t, newErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards running container error", func(t *testing.T) {
+	t.Run("forwards running Container error", func(t *testing.T) {
 		t.Parallel()
 		con, newErr := RunTest(t, func(request *tc.ContainerRequest) error {
 			request.ExposedPorts = nil
@@ -189,10 +189,10 @@ func TestRunTest(t *testing.T) {
 func TestRunTestWithContext(t *testing.T) {
 	t.Parallel()
 
-	t.Run("terminates container after test", func(t *testing.T) {
+	t.Run("terminates Container after test", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
-		var con *container
+		var con *Container
 		/// Using sub test as testing scoep for termination
 		t.Run("sub test scope", func(t *testing.T) {
 			con, _ = RunTestWithContext(t, ctx)
@@ -203,7 +203,7 @@ func TestRunTestWithContext(t *testing.T) {
 		assert.Empty(t, ip)
 	})
 
-	t.Run("should start container", func(t *testing.T) {
+	t.Run("should start Container", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 		con, newErr := RunTestWithContext(t, ctx)
@@ -213,7 +213,7 @@ func TestRunTestWithContext(t *testing.T) {
 		t.Run("connection string", func(t *testing.T) {
 			assert.NotEmpty(t, con.ConnectionString)
 		})
-		t.Run("can connect to container", func(t *testing.T) {
+		t.Run("can connect to Container", func(t *testing.T) {
 			conn, err := nats.Connect(con.ConnectionString)
 			assert.NoError(t, err)
 			assert.Equal(t, nats.CONNECTED, conn.Status())
@@ -230,7 +230,7 @@ func TestRunTestWithContext(t *testing.T) {
 		assert.ErrorIs(t, newErr, testErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards container creation error", func(t *testing.T) {
+	t.Run("forwards Container creation error", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 		con, newErr := RunTestWithContext(t, ctx, func(request *tc.ContainerRequest) error {
@@ -240,7 +240,7 @@ func TestRunTestWithContext(t *testing.T) {
 		assert.Error(t, newErr)
 		assert.Nil(t, con)
 	})
-	t.Run("forwards running container error", func(t *testing.T) {
+	t.Run("forwards running Container error", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 		con, newErr := RunTestWithContext(t, ctx, func(request *tc.ContainerRequest) error {
