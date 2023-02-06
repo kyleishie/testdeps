@@ -1,7 +1,8 @@
-package mongo
+package testmongo
 
 import (
 	"context"
+	"github.com/kyleishie/testdeps/pkg/common"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -49,7 +50,7 @@ func TestContainer_NewClientWithContext(t *testing.T) {
 		assert.NoError(t, client.Ping(ctx, nil))
 	})
 	t.Run("cancelled ctx", func(t *testing.T) {
-		ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+		ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 		cancel()
 		client, err := con.NewClientWithContext(ctx)
 		assert.Error(t, err)
@@ -99,7 +100,7 @@ func TestContainer_NewTestClientWithContext(t *testing.T) {
 		assert.NoError(t, client.Ping(ctx, nil))
 	})
 	t.Run("cancelled ctx", func(t *testing.T) {
-		ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+		ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 		cancel()
 		client, err := con.NewTestClientWithContext(t, ctx)
 		assert.Error(t, err)

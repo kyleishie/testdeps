@@ -1,7 +1,8 @@
-package mongo
+package testmongo
 
 import (
 	"context"
+	"github.com/kyleishie/testdeps/pkg/common"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -36,7 +37,7 @@ func (c *Container) NewClientWithContext(ctx context.Context) (*mongo.Client, er
 // The mongo.Client will be disconnected automatically after the test finishes.
 // Note: A default context is used with a timeout of two minutes.
 func (c *Container) NewTestClient(t *testing.T) (*mongo.Client, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+	ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 	defer cancel()
 	return c.NewTestClientWithContext(t, ctx)
 }
@@ -50,7 +51,7 @@ func (c *Container) NewTestClientWithContext(t *testing.T, ctx context.Context) 
 	}
 
 	t.Cleanup(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+		ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 		defer cancel()
 		if err := client.Disconnect(ctx); err != nil {
 			t.Error(err)

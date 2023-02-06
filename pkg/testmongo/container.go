@@ -1,22 +1,20 @@
-package mongo
+package testmongo
 
 import (
 	"context"
 	"fmt"
-	"testing"
-	"time"
-
+	"github.com/kyleishie/testdeps/pkg/common"
 	"github.com/kyleishie/testdeps/pkg/options"
 	tc "github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
+	"testing"
 )
 
 const (
-	image        = "mongo"
-	mappedPort   = "27017/tcp"
-	readyLog     = "Waiting for connections"
-	proto        = "mongodb"
-	testDuration = time.Minute * 2
+	image      = "mongo"
+	mappedPort = "27017/tcp"
+	readyLog   = "Waiting for connections"
+	proto      = "mongodb"
 )
 
 type Container struct {
@@ -28,7 +26,7 @@ type Container struct {
 // Defaults to `mongo:latest` if no option sets image tag.
 // A default context is used with a timeout of two minutes. To customize use RunWithContext.
 func Run(opts ...options.Option) (*Container, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+	ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 	defer cancel()
 	return RunWithContext(ctx, opts...)
 }
@@ -69,7 +67,7 @@ func RunWithContext(ctx context.Context, opts ...options.Option) (con *Container
 // The Container is automatically terminated after the test is finished.
 // A default context is used with a timeout of two minutes. To customize use RunTestWithContext.
 func RunTest(t *testing.T, opts ...options.Option) (con *Container, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+	ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 	defer cancel()
 	return RunTestWithContext(t, ctx, opts...)
 }
@@ -85,7 +83,7 @@ func RunTestWithContext(t *testing.T, ctx context.Context, opts ...options.Optio
 	}
 
 	t.Cleanup(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+		ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 		defer cancel()
 		if err := c.Terminate(ctx); err != nil {
 			t.Error(err)

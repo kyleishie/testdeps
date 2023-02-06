@@ -1,11 +1,10 @@
-package mongo
+package testmongo
 
 import (
 	"context"
-	"strings"
+	"github.com/kyleishie/testdeps/pkg/common"
 	"testing"
 
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -28,8 +27,8 @@ func (c *Container) NewDatabaseWithContext(ctx context.Context, name string, opt
 // NewTestDatabase creates a new Database with a random name within the Container.
 // The database is automatically dropped after to test it finished.
 // Note: A default context is used with a timeout of two minutes.
-func (c *Container) NewTestDatabase(t *testing.T, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+func (c *Container) NewTestDatabase(t testing.TB, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 	defer cancel()
 	return c.NewTestDatabaseWithContext(t, ctx, opts...)
 }
@@ -37,17 +36,16 @@ func (c *Container) NewTestDatabase(t *testing.T, opts ...*options.DatabaseOptio
 // NewTestDatabaseWithContext creates a new mongo.Database with a random name within the Container.
 // The database will be named randomly.
 // The database is automatically dropped and the underlying mongo.Client will be disconnected after to test it finished.
-func (c *Container) NewTestDatabaseWithContext(t *testing.T, ctx context.Context, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
-	dbId := uuid.New().String()
-	dbId = strings.ReplaceAll(dbId, "-", "")
+func (c *Container) NewTestDatabaseWithContext(t testing.TB, ctx context.Context, opts ...*options.DatabaseOptions) (*mongo.Database, error) {
+	name := common.GenerateId()
 
-	db, err := c.NewDatabaseWithContext(ctx, dbId, opts...)
+	db, err := c.NewDatabaseWithContext(ctx, name, opts...)
 	if err != nil {
 		return nil, err
 	}
 
 	t.Cleanup(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), testDuration)
+		ctx, cancel := context.WithTimeout(context.Background(), common.DefaultConnTimeout)
 		defer cancel()
 		if err := db.Drop(ctx); err != nil {
 			t.Error(err)
