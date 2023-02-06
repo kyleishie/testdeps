@@ -1,4 +1,4 @@
-package nats
+package testnats
 
 import (
 	"github.com/kyleishie/testdeps/pkg/options"

@@ -9,7 +9,7 @@ container to test against. No more wondering if your tests are passing simply be
 
 - [X] Finish pkg/nats
 - [ ] Add examples
-- [ ] Implement PostgreSQL
+- [X] Implement PostgreSQL
 - [ ] Implement Redis
 - [ ] Implement Kafka
 - [ ] Implement DynamoDB
