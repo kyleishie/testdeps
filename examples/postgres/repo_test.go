@@ -1,12 +1,13 @@
 package postgres
 
 import (
+	"github.com/kyleishie/testdeps/pkg/options"
 	"github.com/kyleishie/testdeps/pkg/testsql/testpostgres"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-var container = testpostgres.MustRun()
+var container = testpostgres.MustRun(options.WithCustomTag("13.7"))
 
 func TestCreateUser(t *testing.T) {
 

@@ -37,19 +37,20 @@ func makeContainerRequest(opts []options.Option) (cReq tc.ContainerRequest, err 
 		// Note: This is printed twice during container init and the server is not ready until the second log.
 		WaitingFor: wait.ForLog(readyLog).WithOccurrence(2),
 		AutoRemove: true,
+		Cmd:        []string{"postgres", "-c", "fsync=off"},
 	}
 
 	/// Apply opts
-	if len(opts) == 0 {
-		/// The caller did not specify a password so let's prevent the container error.
-		opts = append(opts, WithPassword(defaultPassword))
-	}
-
 	for _, opt := range opts {
 		err = opt(&cReq)
 		if err != nil {
 			return
 		}
+	}
+
+	if pass, ok := cReq.Env[env_POSTGRES_PASSWORD]; !ok || pass != "" {
+		/// The caller did not specify a password so let's prevent the container error.
+		WithPassword(defaultPassword)(&cReq)
 	}
 
 	return
